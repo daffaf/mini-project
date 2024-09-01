@@ -1,0 +1,28 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "name": "Event 1",
+      "date": "2022-01-01",
+      "location": "Location 1",
+      "tickets": "10",
+      "image": "https://www.elementalproduction.com/wp-content/uploads/2021/05/corporate-events.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Event 2",
+      "date": "2022-05-01",
+      "location": "Location 2",
+      "tickets": "10",
+      "image": "https://www.elementalproduction.com/wp-content/uploads/2021/05/corporate-events.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Event 3",
+      "date": "2022-02-01",
+      "location": "Location 3",
+      "tickets": "10",
+      "image": "https://www.elementalproduction.com/wp-content/uploads/2021/05/corporate-events.jpg"
+    }
+  ]
+}
