@@ -1,6 +1,6 @@
-export const IconText = ({ icon, text, color = "black" }: any) => {
+export const IconText = ({ icon, text, color = "black" ,onClick = ""}: any) => {
   return (
-    <div className="flex flex-row items-center gap-3">
+    <div className="flex flex-row items-center gap-3" onClick={onClick}>
       <span className="font-bold font-material-symbols-outlined" style={{  color: `${color}` }}>{icon}</span>
       <p className="text-sm">{text}</p>
     </div>
