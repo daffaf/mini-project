@@ -7,7 +7,8 @@ export const DatePicker = extendVariants(NextDatePicker, {
       stone: {
         base: [
           "bg-white-100",
-          "py-1"
+          "flex",
+          "flex-row",
         ],
         calendar: [
           "bg-zinc-100",
@@ -28,8 +29,11 @@ export const DatePicker = extendVariants(NextDatePicker, {
           "flex",
           "items-center",
           "p-0"
-
-        ]
+        ],
+        inputWrapper: [
+          "flex",
+          "items-center",
+        ],
       },
     }
   },

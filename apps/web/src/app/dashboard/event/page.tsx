@@ -29,7 +29,7 @@ export default function Event() {
       <div className={`w-1/2 list-none ${isOpen ? "block" : "hidden"}`}>
         {
           toogleMenu.map((item) => (
-            <li>{item}</li>
+            <li key={item}>{item}</li>
           ))
         }
       </div>

@@ -34,13 +34,13 @@ export const FormField = ({ fieldname = '', placeholder = '' }) => {
 export const FormTextArea = ({ fieldname = '', placeholder = '' }) => {
   return (
     <div>
-      <span className="w-full px-4 text-sm">Deskripsi Event</span>
+      <span className="w-full px-4 text-sm">{fieldname}</span>
       <div className="flex flex-col gap-2">
         <div className="w-full p-3 px-5 border rounded ">
           <div className="flex flex-row gap-5">
-            <button className="p-3 px-2 rounded-md outline outline-1 outline-gray-400">b</button>
-            <button className="p-3 rounded-md outline outline-1 outline-gray-400">i</button>
-            <button className="p-3 rounded-md outline outline-1 outline-gray-400">u</button>
+            <button className="flex items-center w-10 h-10 p-2 px-2 text-2xl rounded-md outline outline-1 outline-gray-400 font-material-symbols-outlined">format_bold</button>
+            <button className="flex items-center w-10 h-10 p-2 text-2xl rounded-md outline outline-1 outline-gray-400 font-material-symbols-outlined">format_italic</button>
+            <button className="flex items-center w-10 h-10 p-2 text-2xl rounded-md outline outline-1 outline-gray-400 font-material-symbols-outlined">format_underlined</button>
           </div>
         </div>
         <textarea
@@ -60,11 +60,12 @@ interface FormDropDownProps {
   onChange: (value: string) => void;
   className?: string;
 }
+
 export const FormDropDown: React.FC<FormDropDownProps> = ({
   fieldname = '',
-  options,
-  selectedOption,
-  onChange,
+  options = [],
+  selectedOption = '',
+  onChange = () => { },
   className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -117,7 +118,7 @@ export const DateForm = ({ fieldname = "", className = "" }) => {
           <span className="w-full px-4 text-sm">{fieldname}</span>
         )}
       <div className="w-full p-3 px-5 border rounded ">
-        <CustomDatePicker />
+        <CustomDatePicker color="stone" />
       </div>
     </div>
   )
