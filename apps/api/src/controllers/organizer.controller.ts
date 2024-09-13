@@ -39,6 +39,33 @@ export class OrganizerController {
       })
     }
   }
+  async getOrganizerByUserId(req: Request, res: Response) {
+    try {
+      const userid = +req.params.id
+      const organizer = await prisma.organizer.findUnique({
+        where: { userId: userid },
+        include: {
+          user: true,
+          event: true,
+          voucher: true
+        }
+      })
+      res.status(201).send({
+        status: 'ok',
+        msg: 'Get One Organizer',
+        organizer: {
+          data: organizer,
+          user_firstname: organizer?.user.firstname,
+          user_lastname: organizer?.user.lastname
+        }
+      })
+    } catch (err) {
+      return res.status(400).send({
+        status: 'fail',
+        msg: err
+      })
+    }
+  }
   async createOrganizer(req: Request, res: Response) {
     try {
       const {

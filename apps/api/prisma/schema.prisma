@@ -91,23 +91,36 @@ model Order{
   total Int
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [id] , references: [id])
+  user User @relation(fields: [userId] , references: [id])
+}
+enum Status {
+  Active
+  Pending
+  Inactive
 }
 model Event{
   id Int @id @default(autoincrement())
   eventName String
   eventDate DateTime
-  eventTime String
-  eventPrice Int
   eventImg String @default("")
+  eventDescription String
+  eventStart String
+  eventEnd String
+  eventStatus Status @default(Inactive)
+  ticketPrice Int
+  ticketQuantity Int
+  ticketSold Int @default(0)
+
   locationId Int
   organizerId Int
   eventCategoryId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  organizer Organizer @relation(fields: [organizerId], references: [id])
+  
   eventCategory EventCategory @relation(fields: [eventCategoryId], references: [id])
+  organizer Organizer @relation(fields: [organizerId], references: [id])
 }
+
 model EventCategory {
   id Int @id @default(autoincrement())
   categoryName String @unique

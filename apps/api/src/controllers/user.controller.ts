@@ -11,9 +11,11 @@ import { transporter } from "@/helper/nodemailer";
 export class UserController {
   async createUser(req: Request, res: Response) {
     try {
+      // validate user image
       console.log(req.file)
       if (!req.file) throw "user image not found !"
       const link = `http://localhost:8000/api/public/user/${req?.file?.filename}`
+
       const {
         firstname,
         lastname,
@@ -23,134 +25,159 @@ export class UserController {
         referallCode,
         referallInput,
         referallUsed,
+        organizerName,
+        organizerImg,
       } = req.body
-
-      let referallCodeExist = null;
-      if (referallInput) {
-        referallCodeExist = await prisma.user.findFirst({
-          where: { referallCode: referallInput, referallUsed: false }
-        })
-        if (referallCodeExist?.referallUsed === true) throw 'referall code already used !'
-        if (!referallCodeExist) throw 'referall code not found !'
-      }
-
-      const emailExist = await prisma.user.findUnique({
-        where: { email: req.body.email }
-      })
-      if (emailExist) throw 'email already exist !'
-
-      const salt = await genSalt(10)
-      const hashPassword = await hash(password, salt)
-
-      const newUser = await prisma.user.create({
-        data: {
-          firstname,
-          lastname,
-          email,
-          password: hashPassword,
-          role,
-          userImg: link,
-          referallCode,
-          referallInput: referallInput,
-          referallUsed,
-        }
-      })
-
-      // check if there no duplicate referal code
-      let generateReferallCode = ''
-      if (role != "Organizer") {
-        const randomcode = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
-        let isUnique = false
-        while (isUnique == false) {
-          const tempCode = randomcode(6)
-          const checkCode = await prisma.user.findFirst({
-            where: { referallCode: tempCode }
+      const transactionPrisma = await prisma.$transaction(async (tx) => {
+        // check if referall code exist
+        let referallCodeExist = null;
+        if (referallInput) {
+          referallCodeExist = await tx.user.findFirst({
+            where: { referallCode: referallInput, referallUsed: false }
           })
-
-          if (!checkCode) {
-            generateReferallCode = tempCode
-            isUnique = true
-          }
+          if (referallCodeExist?.referallUsed === true) throw 'referall code already used !'
+          if (!referallCodeExist) throw 'referall code not found !'
         }
-      }
-      const updateUser = await prisma.user.update({
-        where: { id: newUser.id },
-        data: {
-          referallCode: generateReferallCode
-        }
-      })
-      const payload = { id: newUser.id }
-      const token = await sign(payload, process.env.SECRET_JWT!, { expiresIn: '1h' })
+        // check if email already exist
+        const emailExist = await tx.user.findUnique({
+          where: { email: req.body.email }
+        })
+        if (emailExist) throw 'email already exist !'
 
-      const walletExist = await prisma.wallet.findUnique({
-        where: { userId: newUser.id }
-      })
-
-      if (walletExist) throw 'wallet already exist !'
-      const newWallet = await prisma.wallet.create({
-        data: {
-          userId: newUser.id,
-          pointExpired: new Date()
-        }
-      })
-      // referall code used by user
-      if (referallCodeExist) {
-        // update owner referall code (user model)
-        const updateOwnerReferall = await prisma.user.update({
-          where: { id: referallCodeExist.id },
+        // hash password
+        const salt = await genSalt(10)
+        const hashPassword = await hash(password, salt)
+        // create new user
+        const newUser = await tx.user.create({
           data: {
-            referallUsed: true
+            firstname,
+            lastname,
+            email,
+            password: hashPassword,
+            role,
+            userImg: link,
+            referallCode,
+            referallInput: referallInput,
+            referallUsed,
           }
         })
-        // update referall owner point (wallet model)
-        let rewardPoints = 10000
-        const updateWallet = await prisma.wallet.update({
-          where: { userId: referallCodeExist.id },
+        // create organizer
+        if (newUser.role === 'Organizer') {
+
+        }
+        // check if there no duplicate referal code
+        let generateReferallCode = ''
+        if (role != "Organizer") {
+          const randomcode = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
+          let isUnique = false
+          while (isUnique == false) {
+            const tempCode = randomcode(6)
+            const checkCode = await tx.user.findFirst({
+              where: { referallCode: tempCode }
+            })
+
+            if (!checkCode) {
+              generateReferallCode = tempCode
+              isUnique = true
+            }
+          }
+        } else {
+          const defaultImage = `http://localhost:8000/api/public/user/default.png`
+          const newOrganizer = await tx.organizer.create({
+            data: {
+              organizerName,
+              organizerImg: defaultImage,
+              userId: newUser.id
+            }
+          })
+          console.log(newOrganizer);
+
+        }
+        const updateUser = await tx.user.update({
+          where: { id: newUser.id },
           data: {
-            point: rewardPoints,
-            pointExpired: addThreeMonth
+            referallCode: generateReferallCode
           }
         })
-        let rewardCoupon = "firstdiscount10%"
-        var newCoupon = await prisma.coupon.create({
+        const payload = { id: newUser.id }
+        const token = await sign(payload, process.env.SECRET_JWT!, { expiresIn: '1h' })
+
+        const walletExist = await tx.wallet.findUnique({
+          where: { userId: newUser.id }
+        })
+
+        if (walletExist) throw 'wallet already exist !'
+        const newWallet = await tx.wallet.create({
           data: {
-            code: rewardCoupon,
             userId: newUser.id,
-            expiredCode: addOneYear
+            pointExpired: new Date()
           }
         })
-      }
-      const getCoupon = await prisma.coupon.findUnique({
-        where: { userId: newUser.id }
-      })
-      // nodemailer 
-      const templatePath = path.join(__dirname, "../helper/templates", "verification.hbs")
-      const template = fs.readFileSync(templatePath, "utf-8")
-      const compiledTemplate = handlebars.compile(template)
-      const html = compiledTemplate({
-        name: newUser.firstname + newUser.lastname,
-        link: `http://localhost:3000/verify/${token}`
+        // referall code used by user
+        if (referallCodeExist) {
+          // update owner referall code (user model)
+          const updateOwnerReferall = await tx.user.update({
+            where: {
+              id: referallCodeExist.id
+            },
+            data: {
+              referallUsed: true
+            }
+          })
+          // update referall owner point (wallet model)
+          let rewardPoints = 10000
+          const updateWallet = await tx.wallet.update({
+            where: {
+              userId: referallCodeExist.id
+            },
+            data: {
+              point: rewardPoints,
+              pointExpired: addThreeMonth
+            }
+          })
+          let rewardCoupon = "firstdiscount10%"
+          var newCoupon = await tx.coupon.create({
+            data: {
+              code: rewardCoupon,
+              userId: newUser.id,
+              expiredCode: addOneYear
+            }
+          })
+        }
+        const getCoupon = await tx.coupon.findUnique({
+          where: { userId: newUser.id }
+        })
+        // nodemailer 
+        const templatePath = path.join(__dirname, "../templates", "verification.hbs")
+        const templateSrc = fs.readFileSync(templatePath, "utf-8")
+        const compiledTemplate = handlebars.compile(templateSrc)
+        let fullname = newUser.firstname + ' ' + newUser.lastname
+        const html = compiledTemplate({
+          name: fullname,
+          link: `http://localhost:3000/verify/${token}`
+        })
+
+        await transporter.sendMail({
+          from: process.env.MAIL_USER,
+          to: newUser.email,
+          subject: 'Email Verification',
+          html: html
+        })
+        return { newUser, token, newWallet, getCoupon }
       })
 
-      await transporter.sendMail({
-        from: process.env.MAIL_USER,
-        to: newUser.email,
-        subject: 'Email Verification',
-        html: html
-      })
-      // 
       return res.status(200).send({
         status: 'ok',
         msg: 'User Created',
         user: {
-          token,
-          data: newUser
+          token: transactionPrisma.token,
+          data: transactionPrisma.newUser
         },
         wallet: {
-          data: newWallet
+          data: transactionPrisma.newWallet
         },
         coupon: {
-          data: getCoupon
+          data: transactionPrisma.getCoupon
         }
       })
     } catch (err) {
@@ -378,4 +405,5 @@ export class UserController {
       })
     }
   }
+
 }

@@ -17,7 +17,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     next()
   } catch (err) {
     return res.status(400).send({
-      status: 'fail',
+      status: 'failed token',
       msg: err
     })
   }
