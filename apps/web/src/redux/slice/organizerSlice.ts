@@ -1,4 +1,4 @@
-import { IOrgazinerState } from "@/type/user";
+import { IOrgazinerState } from "@/type/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: IOrgazinerState = {

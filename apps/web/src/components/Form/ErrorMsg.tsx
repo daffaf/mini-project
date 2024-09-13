@@ -13,7 +13,7 @@ export const ErrorMsg: React.FC<ErrorMsgProps> = ({ formik, name }) => {
     return null
   }
   if (typeof error === 'string') {
-    return <div className="text-base text-red-500">{error}</div>
+    return <div className="text-sm text-red-500">{error}</div>
   }
 
   return null

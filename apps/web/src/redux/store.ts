@@ -3,6 +3,7 @@ import { persistReducer, persistStore, Persistor } from "redux-persist";
 import { PERSIST, REGISTER, REHYDRATE } from 'redux-persist'
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import userReducer from './slice/userSlice'
+import organizerReducer from "./slice/organizerSlice";
 const createNoopStorage = () => {
   return {
     getItem() {
@@ -24,10 +25,11 @@ const storage = typeof window !== "undefined" ?
 const persistConfig = {
   key: "store",
   storage,
-  timeout: 2000
+  timeout: 1000
 }
 const rootReducer = combineReducers({
   user: userReducer,
+  organizer: organizerReducer
 })
 
 const makeConfiguredStore = () => configureStore({

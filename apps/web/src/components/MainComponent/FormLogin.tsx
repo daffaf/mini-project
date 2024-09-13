@@ -1,7 +1,7 @@
 'use client'
 import { FormikHelpers, useFormik } from "formik"
 import { FormField } from "../Form/FormField"
-import { IOrgazinerState, IUserLogin } from "@/type/user"
+import { IOrgazinerState, IUserLogin } from "@/type/type"
 import { loginUser } from "@/lib/user"
 import * as yup from 'yup'
 import { useRouter } from "next/navigation"
@@ -10,7 +10,7 @@ import { OutlineCard } from "../Card/dashboardOutlineCard"
 import { useAppDispatch } from "@/redux/hooks"
 import { loginAction } from "@/redux/slice/userSlice"
 import { createToken } from "@/lib/server"
-import { getOrganizerAction } from '@/redux/slice/organizerSlice'
+
 const loginSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("email required"),
   password: yup.string()
@@ -21,19 +21,16 @@ export const LoginForm = () => {
   const router = useRouter()
   const dispatch = useAppDispatch()
 
+
   const handleLogin = async (data: IUserLogin, action: FormikHelpers<IUserLogin>) => {
     try {
       const { result, ok } = await loginUser(data)
       if (!ok) throw result.msg
-      action.resetForm()
       toast.success(result.msg)
-      if (result.ok) {
-        dispatch(loginAction(result.user))
-      }
-      console.log(result, ok)
-      createToken(result.token)
-      router.push('/dashboard')
-      console.log(formik.values)
+      action.resetForm()
+      dispatch(loginAction(result.user.data))
+      createToken(result.user.token)
+      router.push('/')
     } catch (err) {
       console.log(err)
       toast.error(err as string)
@@ -51,7 +48,7 @@ export const LoginForm = () => {
   })
   console.log(formik.values)
   return (
-    <div className="w-full">
+    <div className="sm:w-full lg:w-1/4">
       <form onSubmit={formik.handleSubmit}>
         <OutlineCard>
           <FormField

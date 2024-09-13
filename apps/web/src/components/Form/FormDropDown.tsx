@@ -27,7 +27,7 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({
     setIsOpen(!isOpen)
     console.log(`is open is ${!isOpen}`);
   }
-  const handleSelect = (value: string) => {
+  const handleSelect = (value: string | null) => {
     formik.setFieldValue(name, value)
     setIsOpen(false)
     console.log(formik.setFieldValue(fieldname, value))
@@ -64,6 +64,8 @@ export const FormDropDown: React.FC<FormDropDownProps> = ({
           ))}
         </div>
       </div>
+
+      <div></div>
     </div>
   )
 }

@@ -1,24 +1,47 @@
+'use client'
 import { ButtonFill, ButtonOutline } from "@/components/Button/Button";
 import Card, { CardEvent } from "@/components/Card/card";
 import { DashboardOutlineCard } from "@/components/Card/dashboardOutlineCard";
 import { IconText, RoundedIcon } from "@/components/Icons/Icon";
-import Image from "next/image";
+import Navbar from "@/components/Navbar";
+import { getEventsByOrganizerId } from "@/lib/event";
+import { useAppSelector } from "@/redux/hooks";
+import { IEventState } from "@/type/type";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
 export default function Dashboard() {
+  const [events, setEvents] = useState<IEventState[]>([])
+
+  const organizer = useAppSelector((state) => state.organizer)
+  const user = useAppSelector((state) => state.user)
+  const getEvent = async () => {
+    try {
+      const { events, ok, organizerRes } = await getEventsByOrganizerId(organizer.id);
+      if (!ok) throw 'failed get event'
+      console.log(events);
+      setEvents(events)
+    } catch (err) {
+      console.log(`event err : ${err}`)
+    }
+  }
+  useEffect(() => {
+    getEvent()
+  }, [])
 
   return (
     <section className="flex flex-col items-center w-full h-screen">
+      <Navbar />
+
       <Card>
         <div className="flex flex-row items-center gap-5">
           <div className="bg-gray-500 rounded-full">
-            <Image src="" width={40} height={40} alt="user-profile" />
+            <img src={organizer.organizerImg}></img>
           </div>
           <div>
-            <p className="text-xl">organizer name</p>
-            <p className="text-base">organizer name</p>
+            <p className="text-xl">{organizer.organizerName}</p>
           </div>
         </div>
-
         <div className="space-y-3">
           <ButtonOutline>Setting</ButtonOutline>
           <div className="w-full border-b-2 border-gray-200"></div>
@@ -69,7 +92,25 @@ export default function Dashboard() {
           <span className="text-5xl font-material-symbols-outlined">campaign</span>
           <h1 className="text-xl font-semibold">Event Terupdate</h1>
         </div>
-        <CardEvent />
+        {/* <CardEvent /> */}
+        {
+
+          events.map((event) => {
+            return (
+              <CardEvent
+                id={event.id}
+                name={event.eventName}
+                date={event.eventDate}
+                location={event.organizer}
+                status={event.eventStatus}
+                key={event.id}
+                statusColor={
+                  `${event.eventStatus === "Inactive" ? 'bg-red-500' : 'bg-green-400'}`
+                }
+              />
+            )
+          })
+        }
         <div className="flex flex-row items-center justify-center text-xl">
           <Link href="/dashboard/event">
             <p className="text-base">Lihat Semua Event</p>

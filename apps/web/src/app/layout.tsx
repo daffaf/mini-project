@@ -6,6 +6,7 @@ import { Footer } from '@/components/Footer';
 import { Providers } from './providers';
 import StoreProvider from '@/components/MainComponent/StoreProvider';
 import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -30,13 +31,14 @@ export default function RootLayout({
             {children}
             <Footer />
           </StoreProvider>
+          <ToastContainer
+            position='bottom-right'
+            autoClose={3000}
+            closeOnClick
+            draggable
+          />
         </Providers>
-        <ToastContainer
-          position='bottom-right'
-          autoClose={3000}
-          closeOnClick
-          draggable
-        />
+
       </body>
     </html>
   );

@@ -1,4 +1,4 @@
-import { IOrgazinerState, IUserLogin, IUserReg } from "@/type/user"
+import { IOrgazinerState, IUserLogin, IUserReg } from "@/type/type"
 
 const BASE_URL = process.env || 'localhost:8000/api/'
 
@@ -13,10 +13,15 @@ export const registerUser = async (data: IUserReg) => {
   if (data.userImg) {
     formData.append('userImg', data.userImg);
   }
+  formData.append('organizerName', data.organizerName!);
+  // Log the form data
+  for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value}`);
+  }
   const res = await fetch(`http://localhost:8000/api/users`, {
     method: 'POST',
     // body: JSON.stringify(data),
-    body: formData
+    body: formData,
 
   })
   const result = await res.json()
