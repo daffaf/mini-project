@@ -43,7 +43,11 @@ export interface IEventState {
   ticketPrice: number
   ticketQuantity: number
   ticketSold: number
-  location: string
-  organizer: string
+  location: {
+    city: string
+  }
+  organizer: {
+    organizerName: string
+  }
   category: string
 }

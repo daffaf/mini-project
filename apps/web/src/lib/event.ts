@@ -5,6 +5,7 @@ export const getEventsByOrganizerId = async (organizerId: number) => {
   return {
     result,
     events: result.event.data,
+    total: result.event.total,
     organizerRes: result.event.data.organizer,
     ok: res.ok
   }

@@ -12,15 +12,17 @@ import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   const [events, setEvents] = useState<IEventState[]>([])
-
+  const [totalEvent, setTotalEvent] = useState(0)
   const organizer = useAppSelector((state) => state.organizer)
   const user = useAppSelector((state) => state.user)
+
   const getEvent = async () => {
     try {
-      const { events, ok, organizerRes } = await getEventsByOrganizerId(organizer.id);
+      const { events, ok, total } = await getEventsByOrganizerId(organizer.id);
       if (!ok) throw 'failed get event'
       console.log(events);
       setEvents(events)
+      setTotalEvent(total)
     } catch (err) {
       console.log(`event err : ${err}`)
     }
@@ -32,7 +34,6 @@ export default function Dashboard() {
   return (
     <section className="flex flex-col items-center w-full h-screen">
       <Navbar />
-
       <Card>
         <div className="flex flex-row items-center gap-5">
           <div className="bg-gray-500 rounded-full">
@@ -69,7 +70,7 @@ export default function Dashboard() {
           <RoundedIcon>campaign</RoundedIcon>
           <div className="text-base text-gray-500">
             <p >Event Ditayangkan</p>
-            <p >0 Event</p>
+            <p>{totalEvent} Event</p>
           </div>
         </DashboardOutlineCard>
         <DashboardOutlineCard>
@@ -101,7 +102,7 @@ export default function Dashboard() {
                 id={event.id}
                 name={event.eventName}
                 date={event.eventDate}
-                location={event.organizer}
+                location={event.location.city}
                 status={event.eventStatus}
                 key={event.id}
                 statusColor={

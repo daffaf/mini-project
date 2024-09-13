@@ -25,7 +25,7 @@ export const CardEvent: React.FC<CardEventProps> = ({
 }) => {
   return (
     <Link href={`dashboard/event/${1}`}>
-      <div className="flex flex-col max-w-full gap-0 border rounded-md">
+      <div className="flex flex-col max-w-full gap-0 my-5 border rounded-md">
         <div className="relative p-0 mx-0">
           <span className="absolute flex items-center justify-center w-6 h-6 text-white bg-blue-400 rounded-full font-material-symbols-outlined top-2 left-2">videocam</span>
           <span className="absolute flex items-center justify-center w-6 h-6 text-white bg-blue-400 rounded-full font-material-symbols-outlined top-2 left-9">lock</span>
