@@ -177,12 +177,16 @@ export class EventController {
         },
         include: {
           organizer: true,
-          eventCategory: true
+          eventCategory: true,
+          location: true
         }
       })
 
       const totalEventById = await prisma.event.count({
-        where: { organizerId: id }
+        where: {
+          organizerId: id,
+          eventStatus: 'Active'
+        },
       })
       return res.status(200).send({
         status: 'ok',
