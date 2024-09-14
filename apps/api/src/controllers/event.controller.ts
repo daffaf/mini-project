@@ -1,4 +1,5 @@
 import prisma from "@/prisma";
+import { Prisma } from "@prisma/client";
 import { Request, Response } from "express";
 
 interface IEvent {
@@ -145,12 +146,28 @@ export class EventController {
   }
   async getOneEvents(req: Request, res: Response) {
     try {
+      const id = +req.params.id
+      console.log(id)
+      const oneEvent = await prisma.event.findUnique({
+        where: { id: id },
+        include: {
+          location: true,
+          eventCategory: true
+        }
+      })
+      // temp order
+      // const order = await prisma.order.findFirst({
+      //   where: { eventId: id }
+      // })
       return res.status(200).send({
         status: 'ok',
         msg: 'Get One Event',
         event: {
-          data: ''
-        }
+          data: oneEvent
+        },
+        // order: {
+        //   data: order
+        // }
       })
     } catch (err) {
       return res.status(400).send({
@@ -162,15 +179,20 @@ export class EventController {
   async getOneEventsById(req: Request, res: Response) {
     try {
       const id = +req.params.id
-
+      const { search } = req.query
+      let filter: Prisma.EventWhereInput = {}
+      if (search) {
+        filter.eventName = { contains: search as string }
+      }
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 1;
       const skip = (page - 1) * limit;
       const sortBy = req.query.sortBy as string || 'eventStatus';
       const sortOrder = req.query.sortOrder as string || 'desc';
+
       const eventByOrganizerId = await prisma.event.findMany({
-        where: { organizerId: id },
-        skip,
+        where: { organizerId: id, ...filter },
+        skip: skip,
         take: limit,
         orderBy: {
           [sortBy]: sortOrder,
@@ -185,7 +207,7 @@ export class EventController {
       const totalEventById = await prisma.event.count({
         where: {
           organizerId: id,
-          eventStatus: 'Active'
+          ...filter
         },
       })
       return res.status(200).send({

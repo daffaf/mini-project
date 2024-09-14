@@ -15,6 +15,7 @@ export class EventRouter {
     this.router.get('/', this.eventController.paginateEvents)
     // this.router.get('/:id', this.eventController.getOneEvents)
     this.router.get('/:id', this.eventController.getOneEventsById)
+    this.router.get('/detail/:id', this.eventController.getOneEvents)
     this.router.post('/',
       uploader('event-images-', '/event').single('eventImg'),
       this.eventController.createEvent);

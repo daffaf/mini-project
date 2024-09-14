@@ -93,6 +93,21 @@ model Order{
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId] , references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+  voucher Voucher? @relation(fields: [voucherId], references: [id])
+}
+model Voucher{
+  id Int @id @default(autoincrement())
+  kode String
+  organizerId Int
+  totalUsed Int @default(0)
+  maxUsed Int
+  expired_date DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  order Order[]
+  organizer Organizer @relation(fields: [organizerId] ,references: [id])
 }
 enum Status {
   Active
@@ -118,6 +133,7 @@ model Event{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
+  order Order []
   location Location @relation(fields: [locationId], references: [id])
   eventCategory EventCategory @relation(fields: [eventCategoryId], references: [id])
   organizer Organizer @relation(fields: [organizerId], references: [id])
@@ -130,15 +146,4 @@ model EventCategory {
   updatedAt DateTime @updatedAt
   event Event[]
 }
-model Voucher{
-  id Int @id @default(autoincrement())
-  kode String
-  organizerId Int
-  totalUsed Int @default(0)
-  maxUsed Int
-  expired_date DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  organizer Organizer @relation(fields: [organizerId] ,references: [id])
-}
+
