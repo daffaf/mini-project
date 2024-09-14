@@ -29,7 +29,7 @@ const persistConfig = {
 }
 const rootReducer = combineReducers({
   user: userReducer,
-  organizer: organizerReducer
+  organizer: organizerReducer,
 })
 
 const makeConfiguredStore = () => configureStore({

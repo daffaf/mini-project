@@ -12,7 +12,10 @@ interface CardEventProps {
   name: string
   date: string
   location: string
-  status: string
+  status: string,
+  ticketPrice: number,
+  ticketQty?: number,
+  ticketSold?: number,
   statusColor?: string
 }
 export const CardEvent: React.FC<CardEventProps> = ({
@@ -20,11 +23,13 @@ export const CardEvent: React.FC<CardEventProps> = ({
   name = '',
   date = '',
   location = '',
+  ticketPrice = '',
+  ticketQty = '',
+  ticketSold = '',
   status = '',
   statusColor = ''
 }) => {
   return (
-    <Link href={`dashboard/event/${1}`}>
       <div className="flex flex-col max-w-full gap-0 my-5 border rounded-md">
         <div className="relative p-0 mx-0">
           <span className="absolute flex items-center justify-center w-6 h-6 text-white bg-blue-400 rounded-full font-material-symbols-outlined top-2 left-2">videocam</span>
@@ -42,14 +47,14 @@ export const CardEvent: React.FC<CardEventProps> = ({
           <p className="text-xl font-semibold">{name}</p>
           <IconText icon="date_range" text={date} />
           <IconText icon="location_on" text={location} />
-
+          <IconText icon="payments" text={`Rp. ${ticketPrice}`} />
+          <IconText icon="confirmation_number" text={`${ticketSold} / ${ticketQty} Tiket Sold`} />
           <div className="flex flex-row">
-            <IconText icon="edit_square" color="teal" text="" />
-            <IconText icon="check" color="teal" text="" />
+            <IconText icon="edit_square" iconClass="text-xl" color="text-blue-500" text="" />
+            <IconText icon="check" iconClass="text-xl" color="text-teal-500" text="" />
           </div>
         </div>
       </div>
-    </Link>
 
   )
 }

@@ -18,7 +18,10 @@ export default function Dashboard() {
 
   const getEvent = async () => {
     try {
-      const { events, ok, total } = await getEventsByOrganizerId(organizer.id);
+      const limitPerPage = 3
+      const sortBy = 'eventStatus'
+      const page = 1
+      const { events, ok, total } = await getEventsByOrganizerId(organizer.id, page, limitPerPage, sortBy, '');
       if (!ok) throw 'failed get event'
       console.log(events);
       setEvents(events)
@@ -46,7 +49,9 @@ export default function Dashboard() {
         <div className="space-y-3">
           <ButtonOutline>Setting</ButtonOutline>
           <div className="w-full border-b-2 border-gray-200"></div>
-          <ButtonFill>Create Event</ButtonFill>
+          <Link href={'/dashboard/create-event'}>
+            <ButtonFill>Create Event</ButtonFill>
+          </Link>
         </div>
       </Card>
       <div className="w-11/12">
@@ -95,20 +100,23 @@ export default function Dashboard() {
         </div>
         {/* <CardEvent /> */}
         {
-
           events.map((event) => {
             return (
-              <CardEvent
-                id={event.id}
-                name={event.eventName}
-                date={event.eventDate}
-                location={event.location.city}
-                status={event.eventStatus}
-                key={event.id}
-                statusColor={
-                  `${event.eventStatus === "Inactive" ? 'bg-red-500' : 'bg-green-400'}`
-                }
-              />
+              <Link href={`dashboard/event/${event.id}`}>
+                <CardEvent
+                  id={event.id}
+                  name={event.eventName}
+                  date={event.eventDate}
+                  location={event.location.city}
+                  status={event.eventStatus}
+                  ticketPrice={event.ticketPrice}
+                  ticketQty={event.ticketQuantity}
+                  ticketSold={event.ticketSold}
+                  statusColor={
+                    `${event.eventStatus === "Inactive" ? 'bg-red-500' : 'bg-green-400'}`
+                  }
+                />
+              </Link>
             )
           })
         }

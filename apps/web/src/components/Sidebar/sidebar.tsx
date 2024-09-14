@@ -4,7 +4,11 @@ import { ButtonFill, IconButtonFill } from "../Button/Button"
 import { IconText } from "../Icons/Icon"
 import Link from "next/link"
 
-export const Sidebar = () => {
+type ISidebar = {
+  eventName: string,
+  eventStatus: string,
+}
+export const Sidebar = ({ eventName, eventStatus }: ISidebar) => {
   const [isOpen, setIsOpen] = useState(false)
   const toogle = () => {
     setIsOpen(!isOpen)
@@ -28,11 +32,13 @@ export const Sidebar = () => {
       {/* event */}
       <div className="flex flex-col items-start w-full my-6 ">
         <div className="flex flex-col items-cenounded-full justify-cente">
-          <span className="flex items-center justify-center w-8 h-8 text-white bg-blue-400 rounded-full font-material-symbols-outlined">videocam</span>
+          <span className="flex items-center justify-center w-8 h-8 text-white bg-blue-400 rounded-full font-material-symbols-outlined">
+            videocam
+          </span>
         </div>
         <div className="flex flex-col w-full gap-3">
-          <h1 className="text-3xl font-semibold">Nama Event</h1>
-          <span className="p-1 text-white bg-blue-500 rounded-sm w-fit">DRAF</span>
+          <h1 className="text-3xl font-semibold">{eventName}</h1>
+          <span className="p-1 text-white bg-blue-500 rounded-sm w-fit">{eventStatus}</span>
           <IconButtonFill icon="rocket_launch" text="Tayangkan Event" />
           <IconButtonFill icon="visibility" text="Preview" />
         </div>
@@ -43,7 +49,9 @@ export const Sidebar = () => {
       </div>
       {/* event end */}
       <div className="w-full">
-        <div className="flex flex-row items-center justify-between w-full p-3 font-semibold rounded-md cursor-pointer hover:bg-blue-300" onClick={toogle}>
+        <div className="flex flex-row items-center justify-between w-full p-3 font-semibold rounded-md cursor-pointer hover:bg-blue-300"
+          onClick={toogle}
+        >
           <IconText icon="edit_square" text=" Kelola Event" />
           <span className="text-2xl font-material-symbols-outlined">expand_more</span>
         </div>
@@ -59,7 +67,7 @@ export const Sidebar = () => {
         </div>
         {
           sidebarMenu.map((sidebar) => (
-            <Link href={sidebar.link}>
+            <Link href={sidebar.link} key={sidebar.link}>
               <div className="w-full p-3 font-semibold rounded-md cursor-pointer hover:bg-blue-300" key={sidebar.text}>
                 <IconText icon={sidebar.icon} text={sidebar.text}></IconText>
               </div>

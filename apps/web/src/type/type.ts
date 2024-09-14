@@ -51,3 +51,21 @@ export interface IEventState {
   }
   category: string
 }
+export interface IEventReduxState {
+  id: number
+  eventName: string
+  eventDate: string
+  eventStart: string
+  eventEnd: string
+  eventImg: string
+  eventDescription: string
+  eventStatus: string
+  ticketPrice: number
+  ticketQuantity: number
+  ticketSold: number
+  location: {
+    city: string
+  }
+  category: string
+}
+

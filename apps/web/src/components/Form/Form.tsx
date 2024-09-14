@@ -4,22 +4,29 @@ import React, { useState } from "react"
 import { DatePicker as CustomDatePicker } from "@/components/nextui/datepicker";
 import { FormikProps } from "formik";
 
-
-export const FormInputSearch = ({ icon, placeholder }: any) => {
-  return (
-    <div className="relative">
-      <input
-        className="w-full p-3 pl-5 border rounded"
-        type="text"
-        placeholder={placeholder}
-        style={{ fontSize: '14px' }}
-      />
-      <span className="absolute text-gray-400 transform -translate-y-1/2 font-material-symbols-outlined right-3 top-1/2">
-        {icon}
-      </span>
-    </div>
-  )
+interface FormInputSearchProps {
+  icon: string
+  placeholder: string
+  onChange?: () => void
 }
+export const FormInputSearch = React.forwardRef<HTMLInputElement, FormInputSearchProps>(
+  ({ icon, placeholder, }, ref) => {
+    return (
+      <div className="relative">
+        {/* <input
+          className="w-full p-3 pl-5 border rounded"
+          type="search"
+          ref={ref}
+          placeholder={placeholder}
+          onChange={onchange}
+          style={{ fontSize: '14px' }}
+        />
+        <span className="absolute text-gray-400 transform -translate-y-1/2 font-material-symbols-outlined right-3 top-1/2">
+          {icon}
+        </span> */}
+      </div>
+    )
+  })
 
 export const FormTextArea = ({ fieldname = '', placeholder = '' }) => {
   return (
@@ -45,8 +52,12 @@ export const FormTextArea = ({ fieldname = '', placeholder = '' }) => {
 }
 
 
-
-export const DateForm = ({ fieldname = "", className = "" }) => {
+type IDateForm = {
+  fieldname: string
+  className: string
+  value: Date | null
+}
+export const DateForm = ({ fieldname = "", className = "", value = null }: IDateForm) => {
   return (
     <div className={className}>
       {
@@ -54,7 +65,7 @@ export const DateForm = ({ fieldname = "", className = "" }) => {
           <span className="w-full px-4 text-sm">{fieldname}</span>
         )}
       <div className="w-full p-3 px-5 border rounded ">
-        <CustomDatePicker color="stone" />
+        {/* <CustomDatePicker color="stone" value={value} /> */}
       </div>
     </div>
   )
