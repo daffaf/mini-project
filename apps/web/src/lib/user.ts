@@ -61,3 +61,7 @@ export const getOrganizer = async (data: IOrgazinerState) => {
     }
   })
 }
+
+export const getUserById = async () =>{
+  
+}

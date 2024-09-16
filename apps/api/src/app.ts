@@ -29,7 +29,7 @@ export default class App {
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
     this.app.use('/api/public',
-      express.static(path.join(__dirname, "../public"))
+      express.static(path.join(__dirname, "../public/"))
     )
   }
 
