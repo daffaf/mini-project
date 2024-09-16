@@ -15,6 +15,9 @@
   white-space: nowrap;
   direction: ltr;
 }
+.datePicker .nextui-date-picker__input {
+  background-color: rgba(255, 255, 255, 1) !important; /* Change the alpha value to adjust transparency */
+}
 /* :root {
   --max-width: 1100px;
   --border-radius: 12px;

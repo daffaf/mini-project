@@ -19,4 +19,131 @@ model Sample {
 
   @@map("samples") // if you want to use snake_case format
 }
+enum Role {
+  User
+  Participant
+  Organizer
+}
+model User {
+  id Int @id @default(autoincrement())
+  firstname String
+  lastname String
+  email String @unique
+  password String
+  role Role @default(Participant)
+  userImg String @default("")
+  isVerify Boolean @default(false)
+  referallCode String   @default("")
+  referallInput String? 
+  referallUsed Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  wallet Wallet?
+  coupon Coupon?
+  organizer Organizer?
+  order Order[]
+}
+model Coupon{
+  id Int @id @default(autoincrement())
+  code String? 
+  userId Int @unique
+  isUsed Boolean @default(false)
+  expiredCode DateTime
+
+  user User @relation(fields: [userId], references: [id])
+}
+model Organizer{
+  id Int @id @default(autoincrement())
+  userId Int @unique
+  organizerName String @unique
+  organizerImg String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  voucher Voucher[]
+  event Event[]
+  
+  user User @relation(fields: [userId], references: [id])
+}
+model Location{
+  id Int @id @default(autoincrement())
+  province String
+  city String
+  event Event[]
+}
+model Wallet{
+  id Int @id @default(autoincrement())
+  userId Int @unique
+  saldo Int @default(0)
+  point Int @default(0)
+  pointExpired DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+model Order{
+  id Int @id @default(autoincrement())
+  eventId Int 
+  userId Int 
+  voucherId Int?
+  total Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId] , references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+  voucher Voucher? @relation(fields: [voucherId], references: [id])
+}
+model Voucher{
+  id Int @id @default(autoincrement())
+  kode String
+  organizerId Int
+  totalUsed Int @default(0)
+  maxUsed Int
+  expired_date DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  order Order[]
+  organizer Organizer @relation(fields: [organizerId] ,references: [id])
+}
+enum Status {
+  Active
+  Pending
+  Inactive
+}
+model Event{
+  id Int @id @default(autoincrement())
+  eventName String
+  eventDate DateTime
+  eventImg String @default("")
+  eventDescription String
+  eventStart String
+  eventEnd String
+  eventStatus Status @default(Inactive)
+  ticketPrice Int
+  ticketQuantity Int
+  ticketSold Int @default(0)
+
+  locationId Int
+  organizerId Int
+  eventCategoryId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  order Order []
+  location Location @relation(fields: [locationId], references: [id])
+  eventCategory EventCategory @relation(fields: [eventCategoryId], references: [id])
+  organizer Organizer @relation(fields: [organizerId], references: [id])
+}
+
+model EventCategory {
+  id Int @id @default(autoincrement())
+  categoryName String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event Event[]
+}
 
