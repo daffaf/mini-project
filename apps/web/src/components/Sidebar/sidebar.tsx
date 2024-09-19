@@ -1,14 +1,12 @@
 'use client'
-import { useState } from "react"
+import React, { useState } from "react"
 import { ButtonFill, IconButtonFill } from "../Button/Button"
 import { IconText } from "../Icons/Icon"
 import Link from "next/link"
+import Card from "../Card/card"
 
-type ISidebar = {
-  eventName: string,
-  eventStatus: string,
-}
-export const Sidebar = ({ eventName, eventStatus }: ISidebar) => {
+
+export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const toogle = () => {
     setIsOpen(!isOpen)
@@ -28,54 +26,35 @@ export const Sidebar = ({ eventName, eventStatus }: ISidebar) => {
   ]
 
   return (
-    <>
-      {/* event */}
-      <div className="flex flex-col items-start w-full my-6 ">
-        <div className="flex flex-col items-cenounded-full justify-cente">
-          <span className="flex items-center justify-center w-8 h-8 text-white bg-blue-400 rounded-full font-material-symbols-outlined">
-            videocam
-          </span>
-        </div>
-        <div className="flex flex-col w-full gap-3">
-          <h1 className="text-3xl font-semibold">{eventName}</h1>
-          <span className="p-1 text-white bg-blue-500 rounded-sm w-fit">{eventStatus}</span>
-          <IconButtonFill icon="rocket_launch" text="Tayangkan Event" />
-          <IconButtonFill icon="visibility" text="Preview" />
-        </div>
-        <div className="w-full my-4">
-          <p>Butuh panduan event online ?</p>
-          <IconText icon="mail" text="BACA PANDUAN" textClass="font-semibold text-sm text-yellow-500" />
-        </div>
-      </div>
-      {/* event end */}
-      <div className="w-full">
-        <div className="flex flex-row items-center justify-between w-full p-3 font-semibold rounded-md cursor-pointer hover:bg-blue-300"
-          onClick={toogle}
-        >
-          <IconText icon="edit_square" text=" Kelola Event" />
-          <span className="text-2xl font-material-symbols-outlined">expand_more</span>
-        </div>
-        {/* Sidebar Menu Kelola Event */}
-        <div className={`list-none ${isOpen ? "block" : "hidden"}`}>
+      <div className="flex flex-row gap-3">
+        <div className="w-full p-3 shadow-md">
+          <div className="flex flex-row items-center justify-between w-full p-3 font-semibold rounded-md cursor-pointer hover:bg-blue-300"
+            onClick={toogle}
+          >
+            <IconText icon="edit_square" text=" Kelola Event" />
+            <span className="text-2xl font-material-symbols-outlined">expand_more</span>
+          </div>
+          {/* Sidebar Menu Kelola Event */}
+          <div className={`list-none ${isOpen ? "block" : "hidden"}`}>
+            {
+              sidebarMenuList.map((item) => (
+                <Link key={item.name} href={item.link}>
+                  <li className="w-full p-3 text-sm hover:bg-blue-300 hover:rounded-md">{item.name}</li>
+                </Link>
+              ))
+            }
+          </div>
           {
-            sidebarMenuList.map((item) => (
-              <Link key={item.name} href={item.link}>
-                <li className="w-full p-3 text-sm hover:bg-blue-300 hover:rounded-md">{item.name}</li>
+            sidebarMenu.map((sidebar) => (
+              <Link href={sidebar.link} key={sidebar.link}>
+                <div className="w-full p-3 font-semibold rounded-md cursor-pointer hover:bg-blue-300" key={sidebar.text}>
+                  <IconText icon={sidebar.icon} text={sidebar.text}></IconText>
+                </div>
               </Link>
             ))
           }
-        </div>
-        {
-          sidebarMenu.map((sidebar) => (
-            <Link href={sidebar.link} key={sidebar.link}>
-              <div className="w-full p-3 font-semibold rounded-md cursor-pointer hover:bg-blue-300" key={sidebar.text}>
-                <IconText icon={sidebar.icon} text={sidebar.text}></IconText>
-              </div>
-            </Link>
-          ))
-        }
-      </div >
-    </>
+        </div >
+      </div>
   )
 }
 

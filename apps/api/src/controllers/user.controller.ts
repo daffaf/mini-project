@@ -14,7 +14,7 @@ export class UserController {
       // validate user image
       console.log(req.file)
       if (!req.file) throw "user image not found !"
-      const link = `http://localhost:8000/api/public/user/${req?.file?.filename}`
+      const link = `http://localhost:8000/api/public/avatar/${req?.file?.filename}`
 
       const {
         firstname,

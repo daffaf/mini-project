@@ -39,11 +39,13 @@ export const CardEvent: React.FC<CardEventProps> = ({
         <span className={`absolute flex items-center justify-center px-1 font-semibold rounded-md h-fit w-fit top-2 right-2 text-white ${statusColor}`}>{status}</span>
       </div>
       {/* <Image src="" width={80} height={80} alt="user-profile" /> */}
-      <img
-        src={eventImg}
-        alt="event-image"
-        className="bg-cover rounded-tl-md rounded-tr-md"
-      />
+      <div className="w-fit h-[212px] max-w-[320px]">
+        <img
+          src={eventImg}
+          alt="event-image"
+          className="bg-cover rounded-tl-md rounded-tr-md min-w-[290px] min-h-[212px]   object-cover"
+        />
+      </div>
 
       <div className="p-3 space-y-2">
         <p className="text-xl font-semibold">{name}</p>

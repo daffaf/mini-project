@@ -22,6 +22,7 @@ model Sample {
 enum Role {
   User
   Attendees
+  Participant
   Organizer
 }
 model User {
@@ -98,8 +99,9 @@ model Order{
 }
 model Voucher{
   id Int @id @default(autoincrement())
-  kode String
+  kode String 
   organizerId Int
+  discount Int
   totalUsed Int @default(0)
   maxUsed Int
   expired_date DateTime
@@ -123,7 +125,7 @@ model Event{
   eventStart String
   eventEnd String
   eventStatus Status @default(Inactive)
-  isFree Boolean
+  isFree Boolean @default(false)
   ticketPrice Int
   ticketQuantity Int
   ticketSold Int @default(0)

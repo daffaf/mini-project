@@ -2,19 +2,23 @@
 import { ButtonFill, ButtonOutline } from "@/components/Button/Button";
 import Card, { CardEvent } from "@/components/Card/card";
 import { DashboardOutlineCard } from "@/components/Card/dashboardOutlineCard";
+import RoleProtection from "@/components/Form/UnauthorizedPage";
 import { IconText, RoundedIcon } from "@/components/Icons/Icon";
 import Navbar from "@/components/Navbar";
-import { getEventsByOrganizerId } from "@/lib/event";
+import { getAllEventByOrganizerId, getEventsByOrganizerId } from "@/lib/event";
 import { useAppSelector } from "@/redux/hooks";
 import { IEventState } from "@/type/type";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function Dashboard() {
+const Dashboard = () => {
   const [events, setEvents] = useState<IEventState[]>([])
   const [totalEvent, setTotalEvent] = useState(0)
   const organizer = useAppSelector((state) => state.organizer)
+  const [ticketSold, setTicketSold] = useState(0)
+  const [totalSales, setTotalSales] = useState(0)
+
   const user = useAppSelector((state) => state.user)
 
   const getEvent = async () => {
@@ -24,20 +28,47 @@ export default function Dashboard() {
       const page = 1
       const { events, ok, total } = await getEventsByOrganizerId(organizer.id, page, limitPerPage, sortBy, '');
       if (!ok) throw 'failed get event'
-      console.log(events);
-      setEvents(events)
       setTotalEvent(total)
+      setEvents(events)
+
+
+      console.log(`ticket sold : ${events}`);
+
     } catch (err) {
       console.log(`event err : ${err}`)
     }
   }
+  const getAllEvents = async () => {
+    try {
+      const { allEvent } =
+        await getAllEventByOrganizerId(organizer.id)
+      const totalSalesAmount = allEvent.reduce((acc: number, event: IEventState) => {
+        const total = event.ticketPrice * event.ticketSold
+        return acc + total;
+      }, 0);
+      setTotalSales(totalSalesAmount)
+      const totalTicketSold = allEvent.reduce((acc: number, event: IEventState) => {
+        return acc + event.ticketSold;
+      }, 0)
+      setTicketSold(totalTicketSold)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  const formatToIDR = (amount: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(amount);
+  };
   useEffect(() => {
-    getEvent()
+    getEvent(),
+      getAllEvents()
   }, [])
 
   return (
     <section className="flex flex-col items-center w-full h-screen ">
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="flex justify-center w-11/12 gap-3 sm:flex-col lg:flex-row">
         <div className="flex flex-col items-center sm:w-11/12 lg:w-1/4">
           <Card>
@@ -50,7 +81,9 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="space-y-3">
-              <ButtonOutline>Profile</ButtonOutline>
+              <Link href={'/profile'}>
+                <ButtonOutline>Profile</ButtonOutline>
+              </Link>
               <Link href={'/dashboard/create-event'}>
                 <ButtonFill>Create Event</ButtonFill>
               </Link>
@@ -86,14 +119,14 @@ export default function Dashboard() {
                 <RoundedIcon>payments</RoundedIcon>
                 <div className="text-base text-gray-500">
                   <p>Total Penjualan</p>
-                  <p>IDR &#177; 0</p>
+                  <p>{formatToIDR(totalSales)}</p>
                 </div>
               </DashboardOutlineCard>
               <DashboardOutlineCard>
                 <RoundedIcon>confirmation_number</RoundedIcon>
                 <div className="text-base text-gray-500">
                   <p>Total Penjualan Tiket</p>
-                  <p>Tiket &#177; 0</p>
+                  <p>{ticketSold} Tiket</p>
                 </div>
               </DashboardOutlineCard>
             </div>
@@ -104,7 +137,7 @@ export default function Dashboard() {
               <span className="text-5xl font-material-symbols-outlined">campaign</span>
               <h1 className="text-xl font-semibold">Event Terupdate</h1>
             </div>
-            <div className="flex flex-row items-center gap-3">
+            <div className="flex gap-3 sm:flex-col lg:flex-row">
               {
                 events.map((event) => {
                   return (
@@ -150,3 +183,4 @@ export default function Dashboard() {
     </section>
   )
 }
+export default RoleProtection(Dashboard)
