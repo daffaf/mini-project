@@ -1,6 +1,28 @@
-export const ButtonFill = ({ children }: any) => {
+import React from "react"
+
+
+export const ButtonFill = ({ onSubmit, children }: any) => {
   return (
-    <button className="w-full p-2 text-lg font-bold text-white bg-yellow-300 rounded-3xl ">{children}</button>
+    <button
+      type="submit"
+      onSubmit={onSubmit}
+      className="w-full p-2 text-lg font-bold text-white bg-yellow-300 rounded-3xl "
+    >
+      {children}
+    </button>
+  )
+}
+export const IconButtonFill = ({ icon = "", text = "", color = "bg-yellow-300" }: any) => {
+  return (
+    <div>
+      <button
+        type="submit"
+        className={`flex items-center justify-center w-full gap-2 p-2 text-lg font-bold text-white rounded-3xl ${color}`}
+      >
+        <span className="font-material-symbols-outlined">{icon}</span>
+        <span>{text}</span>
+      </button>
+    </div>
   )
 }
 export const ButtonOutline = ({ children }: any) => {
