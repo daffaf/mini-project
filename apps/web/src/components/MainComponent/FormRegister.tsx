@@ -42,9 +42,9 @@ export const RegisterForm = () => {
     try {
       const { result, ok } = await registerUser(data)
       if (!ok) throw result
-      toast.success(result.msg)
       router.push('/login')
       action.resetForm()
+      toast.success(result.msg)
     } catch (err) {
       toast.error(err as string)
       console.log(err);
@@ -87,6 +87,11 @@ export const RegisterForm = () => {
             type="password"
             fieldname="password"
             placeholder="min 8 character" formik={formik} />
+          <FormField
+            name="referallInput"
+            type="text"
+            fieldname="Referall Code"
+            placeholder="Insert Referall Code here" formik={formik} />
           {/* role */}
           <FormDropDown
             fieldname="role"

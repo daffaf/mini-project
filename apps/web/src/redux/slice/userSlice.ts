@@ -8,6 +8,8 @@ const initialState: IUserState = {
   email: '',
   role: '',
   userImg: '',
+  referallCode: '',
+  referallUsed: false
 }
 
 export const userSlice = createSlice({
@@ -15,7 +17,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     loginAction: (state, action: PayloadAction<IUserState>) => {
-      const { id, firstname, lastname, email, role, userImg } = action.payload
+      const { id, firstname, lastname, email, role, userImg, referallCode, referallUsed } = action.payload
 
       state.id = id
       state.firstname = firstname
@@ -23,6 +25,8 @@ export const userSlice = createSlice({
       state.email = email
       state.role = role
       state.userImg = userImg
+      state.referallCode = referallCode,
+        state.referallUsed = referallUsed
     },
     logoutAction: (state) => {
       state.id = 0
@@ -31,6 +35,8 @@ export const userSlice = createSlice({
       state.email = ''
       state.role = ''
       state.userImg = ''
+      state.referallCode = ''
+      state.referallUsed = false
     }
   }
 })

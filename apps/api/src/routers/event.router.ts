@@ -17,6 +17,8 @@ export class EventRouter {
     this.router.get('/:id', this.eventController.getOneEventsById)
     this.router.get('/detail/:id', this.eventController.getOneEvents)
     this.router.post('/',
+      verifyToken,
+      checkIsOrganizer,
       uploader('event-images-', '/event').single('eventImg'),
       this.eventController.createEvent);
     this.router.patch('/:id',

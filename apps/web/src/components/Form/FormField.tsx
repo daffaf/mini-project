@@ -6,6 +6,7 @@ interface FormFieldProps {
   type?: string
   formik: FormikProps<any>
   className?: string
+  value?: string
   placeholder?: string
 }
 export const FormField: React.FC<FormFieldProps> = (
@@ -15,6 +16,7 @@ export const FormField: React.FC<FormFieldProps> = (
     name,
     type = "text",
     className,
+    value,
     formik
   }) => {
   return (

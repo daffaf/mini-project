@@ -26,11 +26,11 @@ export const LoginForm = () => {
     try {
       const { result, ok } = await loginUser(data)
       if (!ok) throw result.msg
-      toast.success(result.msg)
       action.resetForm()
       dispatch(loginAction(result.user.data))
       createToken(result.user.token)
       router.push('/')
+      toast.success(result.msg)
     } catch (err) {
       console.log(err)
       toast.error(err as string)

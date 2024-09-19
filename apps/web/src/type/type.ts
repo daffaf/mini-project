@@ -23,6 +23,8 @@ export interface IUserState {
   email: string
   role: string
   userImg?: string
+  referallCode?: string
+  referallUsed?: boolean
 }
 
 export interface IOrgazinerState {
@@ -36,10 +38,12 @@ export interface IEventState {
   id: number
   eventName: string
   eventDate: string
-  eventTime: string
+  eventStart: string
+  eventEnd: string
   eventImg: string
   eventDescription: string
   eventStatus: string
+  eventType: string
   ticketPrice: number
   ticketQuantity: number
   ticketSold: number

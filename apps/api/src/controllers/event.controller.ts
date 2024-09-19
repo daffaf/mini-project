@@ -203,7 +203,14 @@ export class EventController {
           location: true
         }
       })
-
+      const allEventByOrganizerId = await prisma.event.findMany({
+        where: { organizerId: id },
+        include: {
+          organizer: true,
+          eventCategory: true,
+          location: true
+        }
+      })
       const totalEventById = await prisma.event.count({
         where: {
           organizerId: id,
@@ -215,6 +222,7 @@ export class EventController {
         msg: 'Get One Event',
         event: {
           data: eventByOrganizerId,
+          allEvent: allEventByOrganizerId,
           total: totalEventById,
           page,
           totalPages: Math.ceil(totalEventById / limit),

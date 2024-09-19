@@ -5,7 +5,6 @@ import Navbar from '@/components/Navbar'
 export default function Home() {
   return (
     <main className={styles.main}>
-      <Navbar />
       <div className={styles.description}>
         <p>
           Get started by editing&nbsp;

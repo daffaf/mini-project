@@ -6,15 +6,16 @@ import { IconText } from "@/components/Icons/Icon"
 import { getEventsByOrganizerId } from "@/lib/event"
 import { useAppSelector } from "@/redux/hooks"
 import { IEventState } from "@/type/type"
-import React, { useRef } from "react"
+import React, { ChangeEvent, useRef } from "react"
 import { Pagination } from "@nextui-org/react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useDebounce } from "use-debounce"
 import { useRouter, useSearchParams } from "next/navigation"
 import { format } from "date-fns"
+import RoleProtection from "@/components/Form/UnauthorizedPage"
 
-export default function Event() {
+const Event = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [events, setEvents] = useState<IEventState[]>([])
   const [currentPage, setCurrentPage] = useState(1)
@@ -42,7 +43,8 @@ export default function Event() {
       }
       const { events, ok, total } =
         await getEventsByOrganizerId(organizer.id, page, limitPerPage, 'id', search);
-      if (!ok) throw 'failed get event'
+      if (!ok) throw 'failed get event';
+
       setEvents(events)
       console.log(events)
       setTotalPages(Math.ceil(total / limitPerPage))
@@ -59,7 +61,8 @@ export default function Event() {
     getEvent(page)
   }
 
-  const handleSearch = () => {
+  const handleSearch = (e: ChangeEvent) => {
+    e.preventDefault()
     if (searchRef.current) {
       setSearch(searchRef.current.value)
     }
@@ -68,24 +71,22 @@ export default function Event() {
   const toogleMenu = ["Semua Event", "Draf", "Tayang", "Berakhir"]
   return (
     <section className="flex flex-col items-center w-full h-screen p-3">
-      <div className="flex flex-row gap-3">
-        <div className="w-full">
-          <div className="flex flex-col items-start sm:w-full lg:w-1/5">
-            <div className="w-full p-3 text-white bg-yellow-500 rounded-md cursor-pointer hover:bg-yellow-500">
-              <Link href={`dashboard/event`}>
-                <IconText icon="calendar_month" text="Daftar Event" />
-              </Link>
-            </div>
-            <div className="w-full p-3 rounded-md cursor-pointer hover:bg-yellow-500">
-              <Link href={`event/analytics`}>
-                <IconText icon="calendar_month" text="Analitik Event" />
-              </Link>
-            </div>
+      <div className="flex w-full gap-3 sm:flex-col lg:flex-row">
+        <div className="flex flex-col items-start sm:w-full lg:w-1/5">
+          <div className="w-full p-3 text-white bg-yellow-500 rounded-md cursor-pointer hover:bg-yellow-500">
+            <Link href={`/dashboard/event`}>
+              <IconText icon="calendar_month" text="Daftar Event" />
+            </Link>
+          </div>
+          <div className="w-full p-3 rounded-md cursor-pointer hover:bg-yellow-500">
+            <Link href={`/dashboard/event/analytics`}>
+              <IconText icon="show_chart" text="Analitik Event" />
+            </Link>
           </div>
         </div>
-        <div className="w-full space-y-5">
-          <div className="flex flex-row gap-5">
-            <div className="w-1/4">
+        <div className="w-full p-5 space-y-5 rounded-md shadow-md">
+          <div className="flex gap-5 sm:flex-col lg:flex-row">
+            <div className="sm:w-full lg:w-1/4">
               <Link href={'dashboard/create-event'}>
                 <ButtonFill>&#43; Buat Event</ButtonFill>
               </Link>
@@ -101,41 +102,48 @@ export default function Event() {
               />
             </div>
           </div>
+          <div className="grid items-center w-full gap-2 sm:grid-cols-1 lg:grid-cols-3 justify-items-center">
+            {
+              events.map((event) => {
+                return (
+                  <div className="w-10/12">
+                    <Link href={`event/${event.id}`} key={event.id}>
+                      <CardEvent
+                        id={event.id}
+                        name={event.eventName}
+                        date={format(new Date(event.eventDate), 'yyyy-MM-dd')}
+                        location={event.location.city}
+                        eventImg={event.eventImg}
+                        status={event.eventStatus}
+                        ticketPrice={event.ticketPrice}
+                        ticketQty={event.ticketQuantity}
+                        ticketSold={event.ticketSold}
+                        key={event.id}
+                        statusColor={
+                          `${event.eventStatus === "Inactive" ? 'bg-red-500' : 'bg-green-400'}`
+                        }
+                      />
+                    </Link>
+                  </div>
 
-          {
-            events.map((event) => {
-              return (
-                <CardEvent
-                  id={event.id}
-                  name={event.eventName}
-                  date={format(new Date(event.eventDate), 'yyyy-MM-dd')}
-                  location={event.location.city}
-                  eventImg={event.eventImg}
-                  status={event.eventStatus}
-                  ticketPrice={event.ticketPrice}
-                  ticketQty={event.ticketQuantity}
-                  ticketSold={event.ticketSold}
-                  key={event.id}
-                  statusColor={
-                    `${event.eventStatus === "Inactive" ? 'bg-red-500' : 'bg-green-400'}`
-                  }
-                />
-              )
-            })
-          }
+                )
+              })
+            }
+          </div>
+          <div className="flex flex-row items-center justify-end w-full px-4">
+            <Pagination
+              variant="light"
+              total={totalPages}
+              initialPage={currentPage}
+              onChange={(page) => handlePagination(page)}
+            />
+          </div>
         </div>
-      </div>
-      <div className="flex flex-row items-center">
-        <Pagination
-          variant="light"
-          total={totalPages}
-          initialPage={currentPage}
-          onChange={(page) => handlePagination(page)}
-        />
       </div>
     </section>
   )
 }
+export default RoleProtection(Event)
 {/* <div className="flex flex-row w-full gap-2" onClick={toogle}>
         <p className="underline-offset-4 ">Semua Event</p>
         <span className="font-material-symbols-outlined">keyboard_arrow_down</span>

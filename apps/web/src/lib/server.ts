@@ -8,7 +8,15 @@ export async function createToken(token: string) {
 }
 
 export async function getToken() {
-  return cookies().get('token')?.value
+  const token = cookies().get('token')?.value
+  if (token) {
+    const decodeToken = JSON.parse(atob(token.split('.')[1]))
+    const currentTime = Date.now() / 1000
+    if (decodeToken.exp < currentTime) {
+      return cookies().delete('token')
+    }
+  }
+  return token
 }
 export async function deleteToken() {
   return cookies().delete('token')

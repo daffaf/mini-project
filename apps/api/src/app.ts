@@ -14,6 +14,8 @@ import { SampleRouter } from './routers/sample.router';
 import { EventRouter } from './routers/event.router';
 import { UserRouter } from './routers/user.routers';
 import { CategoryRouter } from './routers/category.router';
+import { OrderRouter } from './routers/order.router';
+import { WalletRouter } from './routers/wallet.router';
 export default class App {
   private app: Express;
 
@@ -61,7 +63,8 @@ export default class App {
     const userRouter = new UserRouter();
     const eventRouter = new EventRouter();
     const categoryRouter = new CategoryRouter();
-
+    const orderRouter = new OrderRouter();
+    const walletRouter = new WalletRouter();
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
     });
@@ -70,6 +73,8 @@ export default class App {
     this.app.use('/api/samples', sampleRouter.getRouter());
     this.app.use('/api/events', eventRouter.getRouter());
     this.app.use('/api/categories', categoryRouter.getRouter())
+    this.app.use('/api/orders', orderRouter.getRouter())
+    this.app.use('/api/wallets', walletRouter.getRouter())
   }
 
   public start(): void {
